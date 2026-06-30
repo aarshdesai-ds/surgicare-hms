@@ -10,6 +10,7 @@ import PatientForm from './pages/PatientForm'
 import PatientProfile from './pages/PatientProfile'
 import Queue from './pages/Queue'
 import OT from './pages/OT'
+import Reports from './pages/Reports'
 
 export default function App() {
   const { loading } = useAuth()
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/patients/:id/edit" element={<PatientForm />} />
         <Route path="/queue" element={<Queue />} />
         <Route path="/ot" element={<OT />} />
+        <Route path="/reports" element={<Reports />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

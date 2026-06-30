@@ -12,6 +12,7 @@ const NAV = [
   { to: '/billing', key: 'nav.billing', icon: '🧾', disabled: true },
   { to: '/beds', key: 'nav.beds', icon: '🛏', disabled: true },
   { to: '/ot', key: 'nav.ot', icon: '⚕' },
+  { to: '/reports', key: 'nav.reports', icon: '📊' },
 ]
 
 export default function Layout() {

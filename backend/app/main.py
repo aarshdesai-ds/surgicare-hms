@@ -18,7 +18,7 @@ from .config import settings
 from .database import connect, disconnect
 from .errors import register_error_handlers
 from .logging_config import configure_logging, get_logger
-from .routers import dashboard, encounters, health, ot, patients, queue
+from .routers import dashboard, encounters, health, ot, patients, queue, reports
 
 log = get_logger(__name__)
 
@@ -69,6 +69,7 @@ def create_app() -> FastAPI:
     app.include_router(dashboard.router)
     app.include_router(ot.router)
     app.include_router(encounters.router)
+    app.include_router(reports.router)
     return app
 
 
