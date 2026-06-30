@@ -1,0 +1,170 @@
+{
+  "app": {
+    "title": "SurgiCare Hospital",
+    "subtitle": "Valsad"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "patients": "Patients",
+    "queue": "OPD Queue",
+    "billing": "Billing",
+    "beds": "Beds & Wards",
+    "ot": "Operation Theatres"
+  },
+  "common": {
+    "signOut": "Sign out",
+    "loading": "Loading…",
+    "comingSoon": "Coming soon",
+    "save": "Save",
+    "saving": "Saving…",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "change": "Change",
+    "prev": "Previous",
+    "next": "Next",
+    "of": "of"
+  },
+  "queue": {
+    "title": "OPD Queue",
+    "date": "Date",
+    "doctor": "Doctor",
+    "opdHours": "OPD hours",
+    "setHours": "Set hours",
+    "noSession": "No session set for this day.",
+    "addPatient": "Add patient",
+    "walkIn": "Add walk-in (check in)",
+    "preBook": "Pre-book (not arrived)",
+    "patient": "Patient",
+    "returning": "Returning patient",
+    "new": "New patient",
+    "newPatient": "New patient details",
+    "existingFound": "A patient with this phone already exists — using their profile.",
+    "nameRequired": "Enter at least a first name and phone number.",
+    "reason": "Reason",
+    "searchPatient": "Search patient by name, phone, or UHID…",
+    "pickPatient": "Please select a patient.",
+    "empty": "No patients in the queue yet.",
+    "groups": {
+      "in_consultation": "In consultation",
+      "waiting": "Waiting",
+      "booked": "Booked – not arrived",
+      "done": "Done"
+    },
+    "status": {
+      "booked": "Booked",
+      "waiting": "Waiting",
+      "in_consultation": "In consultation",
+      "completed": "Completed",
+      "no_show": "No show",
+      "cancelled": "Cancelled"
+    },
+    "actions": {
+      "checkIn": "Check in",
+      "call": "Call in",
+      "complete": "Complete",
+      "noShow": "No show",
+      "cancel": "Cancel"
+    }
+  },
+  "patients": {
+    "title": "Patients",
+    "new": "New patient",
+    "register": "Register",
+    "editTitle": "Edit patient",
+    "searchPlaceholder": "Search by name, phone, or UHID…",
+    "none": "No patients found.",
+    "uhid": "UHID",
+    "name": "Name",
+    "phone": "Phone",
+    "altPhone": "Alternate phone",
+    "gender": "Gender",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "dob": "Date of birth",
+    "bloodGroup": "Blood group",
+    "abha": "ABHA number",
+    "address": "Address",
+    "allergies": "Allergies",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "fixErrors": "Please correct the highlighted fields.",
+    "duplicateWarning": "A patient with this phone number already exists:",
+    "registerAnyway": "Register anyway"
+  },
+  "login": {
+    "heading": "Sign in",
+    "intro": "Sign in to the hospital management system.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "error": "Could not sign in. Please check your email and password."
+  },
+  "ot": {
+    "title": "Operation Theatres",
+    "date": "Date",
+    "theatre": "Theatre",
+    "surgeon": "Surgeon",
+    "allSurgeons": "All surgeons",
+    "patient": "Patient",
+    "procedure": "Procedure",
+    "notes": "Notes",
+    "addCase": "Add case",
+    "empty": "No cases scheduled for this theatre today.",
+    "procedurePlaceholder": "e.g. LSCS, ORIF, D&C…",
+    "pickPatient": "Please select a patient.",
+    "caseRequired": "Select a patient and enter a procedure.",
+    "status": {
+      "scheduled": "Scheduled",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "actions": {
+      "start": "Start",
+      "complete": "Complete",
+      "cancel": "Cancel",
+      "up": "Move up",
+      "down": "Move down"
+    }
+  },
+  "consult": {
+    "title": "Consultation",
+    "consult": "Consult",
+    "addNote": "Add visit note",
+    "doctor": "Doctor",
+    "vitals": "Vitals",
+    "bp": "BP",
+    "pulse": "Pulse",
+    "temp": "Temp",
+    "spo2": "SpO₂",
+    "weight": "Weight",
+    "complaints": "Complaints",
+    "diagnosis": "Diagnosis",
+    "notes": "Notes / advice",
+    "save": "Save note",
+    "saveComplete": "Save & complete",
+    "needSomething": "Enter at least a diagnosis, complaint, note, or vitals.",
+    "history": "Visit history",
+    "noHistory": "No visits recorded yet."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "patientsTotal": "Total patients",
+    "registeredToday": "Registered today",
+    "inQueue": "In queue today",
+    "waiting": "Waiting now",
+    "seenToday": "Seen today",
+    "todayByDoctor": "Today by doctor",
+    "noSession": "No session",
+    "inConsult": "In consult",
+    "done": "Done",
+    "booked": "Booked",
+    "nowServing": "Now serving",
+    "spec": {
+      "orthopedics": "Orthopedics",
+      "obgyn": "OB-GYN"
+    }
+  }
+}

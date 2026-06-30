@@ -1,0 +1,170 @@
+{
+  "app": {
+    "title": "સર્જીકેર હોસ્પિટલ",
+    "subtitle": "વલસાડ"
+  },
+  "nav": {
+    "dashboard": "ડેશબોર્ડ",
+    "patients": "દર્દીઓ",
+    "queue": "ઓપીડી કતાર",
+    "billing": "બિલિંગ",
+    "beds": "પથારી અને વોર્ડ",
+    "ot": "ઓપરેશન થિયેટર"
+  },
+  "common": {
+    "signOut": "સાઇન આઉટ",
+    "loading": "લોડ થઈ રહ્યું છે…",
+    "comingSoon": "ટૂંક સમયમાં આવી રહ્યું છે",
+    "save": "સાચવો",
+    "saving": "સાચવી રહ્યું છે…",
+    "edit": "ફેરફાર કરો",
+    "cancel": "રદ કરો",
+    "change": "બદલો",
+    "prev": "પાછળ",
+    "next": "આગળ",
+    "of": "માંથી"
+  },
+  "queue": {
+    "title": "ઓપીડી કતાર",
+    "date": "તારીખ",
+    "doctor": "ડૉક્ટર",
+    "opdHours": "ઓપીડી સમય",
+    "setHours": "સમય સેટ કરો",
+    "noSession": "આ દિવસ માટે કોઈ સત્ર સેટ નથી.",
+    "addPatient": "દર્દી ઉમેરો",
+    "walkIn": "વૉક-ઇન ઉમેરો (ચેક ઇન)",
+    "preBook": "પ્રી-બુક (હજુ આવ્યા નથી)",
+    "patient": "દર્દી",
+    "returning": "જૂનો દર્દી",
+    "new": "નવો દર્દી",
+    "newPatient": "નવા દર્દીની વિગતો",
+    "existingFound": "આ ફોન સાથેનો દર્દી પહેલેથી અસ્તિત્વમાં છે — તેમની પ્રોફાઇલ વાપરી રહ્યા છીએ.",
+    "nameRequired": "ઓછામાં ઓછું પ્રથમ નામ અને ફોન નંબર દાખલ કરો.",
+    "reason": "કારણ",
+    "searchPatient": "નામ, ફોન અથવા UHID થી દર્દી શોધો…",
+    "pickPatient": "કૃપા કરીને દર્દી પસંદ કરો.",
+    "empty": "કતારમાં હજુ કોઈ દર્દી નથી.",
+    "groups": {
+      "in_consultation": "તપાસ ચાલુ છે",
+      "waiting": "રાહ જોઈ રહ્યા છે",
+      "booked": "બુક થયેલ – આવ્યા નથી",
+      "done": "પૂર્ણ"
+    },
+    "status": {
+      "booked": "બુક થયેલ",
+      "waiting": "રાહમાં",
+      "in_consultation": "તપાસ ચાલુ",
+      "completed": "પૂર્ણ",
+      "no_show": "હાજર નથી",
+      "cancelled": "રદ થયેલ"
+    },
+    "actions": {
+      "checkIn": "ચેક ઇન",
+      "call": "બોલાવો",
+      "complete": "પૂર્ણ કરો",
+      "noShow": "હાજર નથી",
+      "cancel": "રદ કરો"
+    }
+  },
+  "patients": {
+    "title": "દર્દીઓ",
+    "new": "નવો દર્દી",
+    "register": "નોંધણી કરો",
+    "editTitle": "દર્દીમાં ફેરફાર",
+    "searchPlaceholder": "નામ, ફોન અથવા UHID થી શોધો…",
+    "none": "કોઈ દર્દી મળ્યો નથી.",
+    "uhid": "UHID",
+    "name": "નામ",
+    "phone": "ફોન",
+    "altPhone": "વૈકલ્પિક ફોન",
+    "gender": "જાતિ",
+    "firstName": "પ્રથમ નામ",
+    "lastName": "અટક",
+    "dob": "જન્મ તારીખ",
+    "bloodGroup": "બ્લડ ગ્રુપ",
+    "abha": "ABHA નંબર",
+    "address": "સરનામું",
+    "allergies": "એલર્જી",
+    "male": "પુરુષ",
+    "female": "સ્ત્રી",
+    "other": "અન્ય",
+    "fixErrors": "કૃપા કરીને દર્શાવેલ ક્ષેત્રો સુધારો.",
+    "duplicateWarning": "આ ફોન નંબર સાથેનો દર્દી પહેલેથી અસ્તિત્વમાં છે:",
+    "registerAnyway": "છતાં નોંધણી કરો"
+  },
+  "login": {
+    "heading": "સાઇન ઇન કરો",
+    "intro": "હોસ્પિટલ મેનેજમેન્ટ સિસ્ટમમાં સાઇન ઇન કરો.",
+    "email": "ઈમેલ",
+    "password": "પાસવર્ડ",
+    "submit": "સાઇન ઇન",
+    "submitting": "સાઇન ઇન થઈ રહ્યું છે…",
+    "error": "સાઇન ઇન કરી શકાયું નહીં. કૃપા કરીને તમારો ઈમેલ અને પાસવર્ડ તપાસો."
+  },
+  "ot": {
+    "title": "ઓપરેશન થિયેટર",
+    "date": "તારીખ",
+    "theatre": "થિયેટર",
+    "surgeon": "સર્જન",
+    "allSurgeons": "બધા સર્જન",
+    "patient": "દર્દી",
+    "procedure": "પ્રક્રિયા",
+    "notes": "નોંધ",
+    "addCase": "કેસ ઉમેરો",
+    "empty": "આજે આ થિયેટર માટે કોઈ કેસ નથી.",
+    "procedurePlaceholder": "દા.ત. LSCS, ORIF, D&C…",
+    "pickPatient": "કૃપા કરીને દર્દી પસંદ કરો.",
+    "caseRequired": "દર્દી પસંદ કરો અને પ્રક્રિયા દાખલ કરો.",
+    "status": {
+      "scheduled": "નિર્ધારિત",
+      "in_progress": "ચાલુ છે",
+      "completed": "પૂર્ણ",
+      "cancelled": "રદ થયેલ"
+    },
+    "actions": {
+      "start": "શરૂ કરો",
+      "complete": "પૂર્ણ કરો",
+      "cancel": "રદ કરો",
+      "up": "ઉપર ખસેડો",
+      "down": "નીચે ખસેડો"
+    }
+  },
+  "consult": {
+    "title": "પરામર્શ",
+    "consult": "પરામર્શ",
+    "addNote": "મુલાકાત નોંધ ઉમેરો",
+    "doctor": "ડૉક્ટર",
+    "vitals": "વાઇટલ્સ",
+    "bp": "બીપી",
+    "pulse": "પલ્સ",
+    "temp": "તાપમાન",
+    "spo2": "SpO₂",
+    "weight": "વજન",
+    "complaints": "ફરિયાદ",
+    "diagnosis": "નિદાન",
+    "notes": "નોંધ / સલાહ",
+    "save": "નોંધ સાચવો",
+    "saveComplete": "સાચવો અને પૂર્ણ કરો",
+    "needSomething": "ઓછામાં ઓછું નિદાન, ફરિયાદ, નોંધ અથવા વાઇટલ્સ દાખલ કરો.",
+    "history": "મુલાકાત ઇતિહાસ",
+    "noHistory": "હજુ કોઈ મુલાકાત નોંધાઈ નથી."
+  },
+  "dashboard": {
+    "title": "ડેશબોર્ડ",
+    "patientsTotal": "કુલ દર્દીઓ",
+    "registeredToday": "આજે નોંધાયેલા",
+    "inQueue": "આજે કતારમાં",
+    "waiting": "હાલ રાહમાં",
+    "seenToday": "આજે તપાસેલા",
+    "todayByDoctor": "આજે ડૉક્ટર પ્રમાણે",
+    "noSession": "કોઈ સત્ર નથી",
+    "inConsult": "તપાસમાં",
+    "done": "પૂર્ણ",
+    "booked": "બુક થયેલ",
+    "nowServing": "હાલ ચાલુ ટોકન",
+    "spec": {
+      "orthopedics": "ઓર્થોપેડિક્સ",
+      "obgyn": "ઓબ્સ્ટેટ્રિક્સ-ગાયનેક"
+    }
+  }
+}
