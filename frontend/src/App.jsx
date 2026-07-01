@@ -11,6 +11,7 @@ import PatientProfile from './pages/PatientProfile'
 import Queue from './pages/Queue'
 import OT from './pages/OT'
 import Reports from './pages/Reports'
+import Staff from './pages/Staff'
 
 export default function App() {
   const { loading } = useAuth()
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/queue" element={<Queue />} />
         <Route path="/ot" element={<OT />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/staff" element={<Staff />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

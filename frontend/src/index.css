@@ -816,6 +816,47 @@ h1, h2, h3, .brand-title, .page-title, .auth-brand h1 {
   .queue-row .appt-side { align-items: flex-start; width: 100%; }
 }
 
+/* ================= Staff & roles ================= */
+.data-table select {
+  padding: 7px 10px; border: 1px solid var(--border-strong); border-radius: 8px;
+  background: var(--surface-2); font-family: inherit; font-size: 13.5px;
+  color: var(--text); outline: none;
+}
+.data-table select:focus { border-color: var(--primary); box-shadow: var(--ring); }
+.data-table select:disabled { opacity: 0.5; cursor: default; }
+
+.status-toggle {
+  border: 1px solid; padding: 5px 13px; border-radius: 20px;
+  font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
+  transition: filter 0.14s var(--ease);
+}
+.status-toggle.on { background: var(--ok-bg); color: var(--ok-fg); border-color: #cce3d2; }
+.status-toggle.off { background: var(--bad-bg); color: var(--bad-fg); border-color: #efccbe; }
+.status-toggle:hover:not(:disabled) { filter: brightness(0.97); }
+.status-toggle:disabled { opacity: 0.5; cursor: default; }
+
+.password-field { position: relative; }
+.password-field input { width: 100%; padding-right: 62px; }
+.pw-toggle {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  border: 0; background: transparent; cursor: pointer; font-family: inherit;
+  font-size: 12px; font-weight: 700; color: var(--primary); padding: 4px 8px;
+  border-radius: 6px;
+}
+.pw-toggle:hover { background: var(--primary-soft); }
+
+.name-input {
+  border: 1px solid transparent; background: transparent; border-radius: 8px;
+  padding: 6px 9px; font-family: inherit; font-size: 14.5px; color: var(--text);
+  outline: none; width: 100%; max-width: 200px; transition: border-color 0.14s var(--ease), background 0.14s var(--ease);
+}
+.name-input::placeholder { color: var(--muted); font-style: italic; }
+.name-input:hover { border-color: var(--border); background: var(--surface-2); }
+.name-input:focus { border-color: var(--primary); background: var(--surface); box-shadow: var(--ring); }
+
+.staff-note { margin-top: 14px; font-size: 13px; max-width: 720px; }
+.data-table .badge.s-spec { margin-left: 8px; }
+
 /* ================= Reports / day-book ================= */
 .report {
   background: var(--surface); border: 1px solid var(--border);

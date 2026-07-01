@@ -13,11 +13,13 @@ const NAV = [
   { to: '/beds', key: 'nav.beds', icon: '🛏', disabled: true },
   { to: '/ot', key: 'nav.ot', icon: '⚕' },
   { to: '/reports', key: 'nav.reports', icon: '📊' },
+  { to: '/staff', key: 'nav.staff', icon: '👥', adminOnly: true },
 ]
 
 export default function Layout() {
   const { t } = useTranslation()
-  const { user, signOut } = useAuth()
+  const { user, role, signOut } = useAuth()
+  const navItems = NAV.filter((item) => !item.adminOnly || role === 'admin')
 
   return (
     <div className="app-shell">
@@ -31,7 +33,7 @@ export default function Layout() {
         </div>
 
         <nav className="nav">
-          {NAV.map((item) =>
+          {navItems.map((item) =>
             item.disabled ? (
               <span key={item.to} className="nav-item disabled" title={t('common.comingSoon')}>
                 <span className="nav-icon">{item.icon}</span>

@@ -8,6 +8,7 @@
     "patients": "Patients",
     "queue": "OPD Queue",
     "reports": "Reports",
+    "staff": "Staff",
     "billing": "Billing",
     "beds": "Beds & Wards",
     "ot": "Operation Theatres"
@@ -128,6 +129,34 @@
       "cancel": "Cancel",
       "up": "Move up",
       "down": "Move down"
+    }
+  },
+  "staff": {
+    "title": "Staff & roles",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "you": "You",
+    "add": "Add staff",
+    "create": "Create login",
+    "createTitle": "New staff login",
+    "password": "Password",
+    "fullName": "Full name",
+    "phone": "Phone",
+    "namePlaceholder": "Add name…",
+    "show": "Show",
+    "hide": "Hide",
+    "adminOnly": "Only admins can manage staff.",
+    "note": "Click a name to edit it. Deactivating a user removes their ability to perform role-based actions. Use “Add staff” to create a new login.",
+    "roles": {
+      "admin": "Admin",
+      "doctor": "Doctor",
+      "reception": "Reception",
+      "billing": "Billing",
+      "nurse": "Nurse"
     }
   },
   "reports": {
