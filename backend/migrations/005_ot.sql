@@ -6,13 +6,17 @@
 
 -- ---- Theatres (seed OT-1, OT-2) ---------------------------------------------
 CREATE TABLE IF NOT EXISTS public.operation_theatres (
-    id        bigint generated always as identity primary key,
-    name      text not null unique,
-    is_active boolean not null default true
+    id         bigint generated always as identity primary key,
+    name       text not null unique,
+    obgyn_only boolean not null default false,  -- Labor Room = OB-GYN only
+    is_active  boolean not null default true
 );
 
-INSERT INTO public.operation_theatres (name)
-SELECT * FROM (VALUES ('OT-1'), ('OT-2')) AS seed(name)
+INSERT INTO public.operation_theatres (name, obgyn_only)
+SELECT * FROM (VALUES
+    ('Operation Theatre', false),
+    ('Labor Room', true)
+) AS seed(name, obgyn_only)
 WHERE NOT EXISTS (SELECT 1 FROM public.operation_theatres);
 
 -- ---- OT cases (ordered list per theatre per day) ----------------------------

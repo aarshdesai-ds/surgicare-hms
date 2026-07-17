@@ -74,7 +74,7 @@ export default function Dashboard() {
 function StatCard({ icon, value, label, accent, ok }) {
   return (
     <div className={`stat-card${accent ? ' accent' : ''}${ok ? ' ok' : ''}`}>
-      <span className="stat-icon">{icon}</span>
+      <span className="stat-chip">{icon}</span>
       <span className="stat-value">{value}</span>
       <span className="stat-label">{label}</span>
     </div>

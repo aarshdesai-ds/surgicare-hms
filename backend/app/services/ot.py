@@ -28,7 +28,7 @@ _OT_SELECT = """
 
 async def list_theatres(conn: asyncpg.Connection) -> list[dict]:
     rows = await conn.fetch(
-        "SELECT id, name FROM public.operation_theatres "
+        "SELECT id, name, obgyn_only FROM public.operation_theatres "
         "WHERE is_active = true ORDER BY name"
     )
     return [dict(r) for r in rows]
@@ -73,15 +73,25 @@ async def add(conn: asyncpg.Connection, data: OTCaseCreate, actor_id: str) -> di
         "SELECT 1 FROM public.patients WHERE id = $1", data.patient_id
     ):
         raise AppError("NOT_FOUND", "Patient not found.", status_code=404)
-    if not await conn.fetchval(
-        "SELECT 1 FROM public.doctors WHERE id = $1 AND is_active = true",
+    surgeon = await conn.fetchrow(
+        "SELECT specialty FROM public.doctors WHERE id = $1 AND is_active = true",
         data.surgeon_id,
-    ):
+    )
+    if surgeon is None:
         raise AppError("NOT_FOUND", "Surgeon not found.", status_code=404)
-    if not await conn.fetchval(
-        "SELECT 1 FROM public.operation_theatres WHERE id = $1", data.theatre_id
-    ):
+    theatre = await conn.fetchrow(
+        "SELECT name, obgyn_only FROM public.operation_theatres WHERE id = $1",
+        data.theatre_id,
+    )
+    if theatre is None:
         raise AppError("NOT_FOUND", "Theatre not found.", status_code=404)
+    # Labor Room is for obstetrics & gynaecology surgeons only.
+    if theatre["obgyn_only"] and surgeon["specialty"] != "obgyn":
+        raise AppError(
+            "THEATRE_RESTRICTED",
+            f"The {theatre['name']} is for obstetrics & gynaecology surgeons only.",
+            status_code=422,
+        )
 
     position = await conn.fetchval(
         "SELECT COALESCE(MAX(position), 0) + 1 FROM public.ot_cases "

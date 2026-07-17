@@ -9,14 +9,19 @@ function todayISO() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-// Common procedures (OB-GYN + orthopedic + minor) — suggestions only, free-text.
-const PROCEDURES = [
-  'Normal delivery', 'Cesarean section (LSCS)', 'D&C', 'Hysterectomy',
-  'Tubal ligation', 'Ovarian cystectomy',
-  'Closed reduction', 'ORIF (fracture fixation)', 'K-wire fixation',
-  'POP / plaster application', 'Arthroscopy', 'Implant removal',
-  'Incision & drainage', 'Suturing', 'Biopsy',
-]
+// Procedure suggestions depend on the selected surgeon's specialty (free-text,
+// so anything can still be typed). Common minor procedures apply to both.
+const PROCEDURES_BY_SPECIALTY = {
+  orthopedics: [
+    'Closed reduction', 'ORIF (fracture fixation)', 'K-wire fixation',
+    'POP / plaster application', 'Arthroscopy', 'Implant removal', 'Debridement',
+  ],
+  obgyn: [
+    'Normal delivery', 'Cesarean section (LSCS)', 'D&C', 'Hysterectomy',
+    'Tubal ligation', 'Ovarian cystectomy', 'Cervical encerclage',
+  ],
+}
+const COMMON_PROCEDURES = ['Incision & drainage', 'Suturing', 'Biopsy']
 
 const ACTIONS = {
   scheduled: [['in_progress', 'start', 'primary'], ['cancelled', 'cancel', 'ghost']],
@@ -62,6 +67,8 @@ export default function OT() {
     try { await fn(); load() } catch (e) { setError(e.message) }
   }
 
+  const currentTheatre = theatres.find((x) => String(x.id) === theatreId)
+
   return (
     <div className="page">
       <div className="page-header">
@@ -80,6 +87,9 @@ export default function OT() {
               <option key={th.id} value={th.id}>{th.name}</option>
             ))}
           </select>
+          {currentTheatre?.obgyn_only && (
+            <small className="control-hint">{t('ot.obgynOnly')}</small>
+          )}
         </label>
         <label className="control">
           <span>{t('ot.surgeon')}</span>
@@ -98,7 +108,8 @@ export default function OT() {
         </label>
       </div>
 
-      <AddCase theatreId={theatreId} day={day} t={t} doctors={doctors} onAdded={load} onError={setError} />
+      <AddCase theatreId={theatreId} day={day} t={t} doctors={doctors}
+        obgynOnly={currentTheatre?.obgyn_only} onAdded={load} onError={setError} />
 
       {error && <div className="alert error">{error}</div>}
 
@@ -148,7 +159,7 @@ export default function OT() {
   )
 }
 
-function AddCase({ theatreId, day, t, doctors, onAdded, onError }) {
+function AddCase({ theatreId, day, t, doctors, obgynOnly, onAdded, onError }) {
   const [open, setOpen] = useState(false)
   const [patient, setPatient] = useState(null)
   const [surgeonId, setSurgeonId] = useState('')
@@ -156,9 +167,23 @@ function AddCase({ theatreId, day, t, doctors, onAdded, onError }) {
   const [notes, setNotes] = useState('')
   const [busy, setBusy] = useState(false)
 
+  // Labor Room only allows OB-GYN surgeons.
+  const eligible = obgynOnly ? doctors.filter((d) => d.specialty === 'obgyn') : doctors
+
+  // Procedure suggestions follow the selected surgeon's specialty.
+  const surgeon = doctors.find((d) => String(d.id) === surgeonId)
+  const procedures = [
+    ...(PROCEDURES_BY_SPECIALTY[surgeon?.specialty] || []),
+    ...COMMON_PROCEDURES,
+  ]
+
   useEffect(() => {
-    if (doctors.length && !surgeonId) setSurgeonId(String(doctors[0].id))
-  }, [doctors, surgeonId])
+    // Default/reset the surgeon to an eligible one for this theatre.
+    if (eligible.length && !eligible.some((d) => String(d.id) === surgeonId)) {
+      setSurgeonId(String(eligible[0].id))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eligible, surgeonId])
 
   function reset() {
     setOpen(false); setPatient(null); setProcedure(''); setNotes('')
@@ -187,7 +212,7 @@ function AddCase({ theatreId, day, t, doctors, onAdded, onError }) {
   return (
     <div className="card add-panel">
       <datalist id="ot-procedures">
-        {PROCEDURES.map((p) => <option key={p} value={p} />)}
+        {procedures.map((p) => <option key={p} value={p} />)}
       </datalist>
       <div className="ot-add-grid">
         <div className="add-field">
@@ -197,7 +222,7 @@ function AddCase({ theatreId, day, t, doctors, onAdded, onError }) {
         <div className="add-field">
           <span className="field-label">{t('ot.surgeon')}</span>
           <select value={surgeonId} onChange={(e) => setSurgeonId(e.target.value)}>
-            {doctors.map((d) => <option key={d.id} value={d.id}>{d.full_name}</option>)}
+            {eligible.map((d) => <option key={d.id} value={d.id}>{d.full_name}</option>)}
           </select>
         </div>
         <div className="add-field">
