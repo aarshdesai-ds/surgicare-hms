@@ -10,6 +10,7 @@
     "reports": "Reports",
     "staff": "Staff",
     "billing": "Billing",
+    "pharmacy": "Pharmacy",
     "beds": "Beds & Wards",
     "ot": "Operation Theatres"
   },
@@ -290,11 +291,36 @@
     "complaints": "Complaints",
     "diagnosis": "Diagnosis",
     "notes": "Notes / advice",
+    "medicines": "Medicines (prescription)",
+    "addMedicine": "+ Add medicine",
+    "drug": "Drug",
+    "strength": "Strength",
+    "frequency": "Frequency",
+    "duration": "Duration",
+    "qty": "Qty",
+    "instructions": "Instructions",
     "save": "Save note",
     "saveComplete": "Save & complete",
-    "needSomething": "Enter at least a diagnosis, complaint, note, or vitals.",
+    "needSomething": "Enter a note/vitals or at least one medicine.",
     "history": "Visit history",
     "noHistory": "No visits recorded yet."
+  },
+  "rx": {
+    "history": "Prescriptions",
+    "none": "No prescriptions yet.",
+    "qty": "Qty",
+    "status_pending": "Pending",
+    "status_sent": "Sent to pharmacy",
+    "status_failed": "Failed"
+  },
+  "pharmacy": {
+    "title": "Pharmacy",
+    "pending": "{{n}} to send",
+    "none": "No prescriptions waiting to send.",
+    "hint": "Prescriptions the doctors have issued, queued for the pharmacy. Copy the JSON to import into Visual Chemist, then mark as sent. (Direct auto-send activates once the pharmacy's transport is configured.)",
+    "copyJson": "Copy JSON",
+    "copied": "Copied!",
+    "markSent": "Mark sent"
   },
   "dashboard": {
     "title": "Dashboard",

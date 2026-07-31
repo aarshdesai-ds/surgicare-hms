@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createEncounter } from '../lib/encounters'
+import { createPrescription } from '../lib/prescriptions'
+
+const emptyMed = () => ({ drug_name: '', strength: '', frequency: '', duration: '', quantity: '', instructions: '' })
 
 /**
  * Record a consultation/visit note for a patient.
@@ -22,27 +25,54 @@ export default function ConsultationModal({
   const [complaints, setComplaints] = useState('')
   const [diagnosis, setDiagnosis] = useState('')
   const [notes, setNotes] = useState('')
+  const [meds, setMeds] = useState([emptyMed()])
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+
+  const setMed = (i, k, val) => setMeds((m) => m.map((row, j) => (j === i ? { ...row, [k]: val } : row)))
+  const addMed = () => setMeds((m) => [...m, emptyMed()])
+  const removeMed = (i) => setMeds((m) => (m.length > 1 ? m.filter((_, j) => j !== i) : m))
 
   async function save(complete) {
     const vitals = Object.fromEntries(
       Object.entries(v).filter(([, val]) => val.trim()),
     )
-    if (!complaints.trim() && !diagnosis.trim() && !notes.trim() && Object.keys(vitals).length === 0) {
+    const filledMeds = meds.filter((m) => m.drug_name.trim())
+    const hasEncounter =
+      complaints.trim() || diagnosis.trim() || notes.trim() || Object.keys(vitals).length > 0
+    if (!hasEncounter && filledMeds.length === 0) {
       setError(t('consult.needSomething')); return
     }
     setBusy(true); setError('')
     try {
-      await createEncounter({
-        patient_id: patientId,
-        doctor_id: doctorId ? Number(doctorId) : undefined,
-        queue_entry_id: queueEntryId,
-        vitals: Object.keys(vitals).length ? vitals : undefined,
-        complaints: complaints || undefined,
-        diagnosis: diagnosis || undefined,
-        notes: notes || undefined,
-      })
+      let encounterId
+      if (hasEncounter) {
+        const enc = await createEncounter({
+          patient_id: patientId,
+          doctor_id: doctorId ? Number(doctorId) : undefined,
+          queue_entry_id: queueEntryId,
+          vitals: Object.keys(vitals).length ? vitals : undefined,
+          complaints: complaints || undefined,
+          diagnosis: diagnosis || undefined,
+          notes: notes || undefined,
+        })
+        encounterId = enc.id
+      }
+      if (filledMeds.length) {
+        await createPrescription({
+          patient_id: patientId,
+          doctor_id: doctorId ? Number(doctorId) : undefined,
+          encounter_id: encounterId,
+          items: filledMeds.map((m) => ({
+            drug_name: m.drug_name,
+            strength: m.strength || undefined,
+            frequency: m.frequency || undefined,
+            duration: m.duration || undefined,
+            quantity: m.quantity || undefined,
+            instructions: m.instructions || undefined,
+          })),
+        })
+      }
       if (complete && onComplete) await onComplete()
       onSaved()
     } catch (e) { setError(e.message) } finally { setBusy(false) }
@@ -90,6 +120,22 @@ export default function ConsultationModal({
             <span>{t('consult.notes')}</span>
             <textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
           </label>
+
+          <div className="rx-section">
+            <span className="field-label">{t('consult.medicines')}</span>
+            {meds.map((m, i) => (
+              <div className="rx-row" key={i}>
+                <input placeholder={t('consult.drug')} value={m.drug_name} onChange={(e) => setMed(i, 'drug_name', e.target.value)} />
+                <input placeholder={t('consult.strength')} value={m.strength} onChange={(e) => setMed(i, 'strength', e.target.value)} />
+                <input placeholder={t('consult.frequency')} value={m.frequency} onChange={(e) => setMed(i, 'frequency', e.target.value)} />
+                <input placeholder={t('consult.duration')} value={m.duration} onChange={(e) => setMed(i, 'duration', e.target.value)} />
+                <input placeholder={t('consult.qty')} value={m.quantity} onChange={(e) => setMed(i, 'quantity', e.target.value)} />
+                <input placeholder={t('consult.instructions')} value={m.instructions} onChange={(e) => setMed(i, 'instructions', e.target.value)} />
+                <button type="button" className="link-danger" onClick={() => removeMed(i)}>×</button>
+              </div>
+            ))}
+            <button type="button" className="btn-ghost sm" onClick={addMed}>{t('consult.addMedicine')}</button>
+          </div>
 
           {error && <div className="alert error">{error}</div>}
         </div>

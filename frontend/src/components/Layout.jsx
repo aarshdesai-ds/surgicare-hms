@@ -11,6 +11,7 @@ const NAV = [
   { to: '/queue', key: 'nav.queue', icon: '📋' },
   { to: '/billing', key: 'nav.billing', icon: '🧾' },
   { to: '/beds', key: 'nav.beds', icon: '🛏' },
+  { to: '/pharmacy', key: 'nav.pharmacy', icon: '💊' },
   { to: '/ot', key: 'nav.ot', icon: '⚕' },
   { to: '/reports', key: 'nav.reports', icon: '📊' },
   { to: '/staff', key: 'nav.staff', icon: '👥', adminOnly: true },

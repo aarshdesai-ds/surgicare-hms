@@ -16,6 +16,7 @@ import Billing from './pages/Billing'
 import InvoiceDetail from './pages/InvoiceDetail'
 import ServiceCatalog from './pages/ServiceCatalog'
 import Beds from './pages/Beds'
+import Pharmacy from './pages/Pharmacy'
 
 export default function App() {
   const { loading } = useAuth()
@@ -48,6 +49,7 @@ export default function App() {
         <Route path="/billing/services" element={<ServiceCatalog />} />
         <Route path="/billing/:id" element={<InvoiceDetail />} />
         <Route path="/beds" element={<Beds />} />
+        <Route path="/pharmacy" element={<Pharmacy />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

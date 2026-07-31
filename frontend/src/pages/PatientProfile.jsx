@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getPatient } from '../lib/patients'
 import { listEncounters } from '../lib/encounters'
+import { listPrescriptions } from '../lib/prescriptions'
 import { listDoctors } from '../lib/queue'
 import ConsultationModal from '../components/ConsultationModal'
 
@@ -19,6 +20,7 @@ export default function PatientProfile() {
 
   const [patient, setPatient] = useState(null)
   const [encounters, setEncounters] = useState([])
+  const [prescriptions, setPrescriptions] = useState([])
   const [doctors, setDoctors] = useState([])
   const [showConsult, setShowConsult] = useState(false)
   const [error, setError] = useState('')
@@ -26,12 +28,16 @@ export default function PatientProfile() {
   const loadEncounters = useCallback(() => {
     listEncounters(id).then((r) => setEncounters(r.items)).catch(() => {})
   }, [id])
+  const loadRx = useCallback(() => {
+    listPrescriptions(id).then((r) => setPrescriptions(r.items)).catch(() => {})
+  }, [id])
 
   useEffect(() => {
     getPatient(id).then(setPatient).catch((e) => setError(e.message))
     listDoctors().then(setDoctors).catch(() => {})
     loadEncounters()
-  }, [id, loadEncounters])
+    loadRx()
+  }, [id, loadEncounters, loadRx])
 
   if (error) return <div className="page"><div className="alert error">{error}</div></div>
   if (!patient) return <div className="page"><p className="muted">{t('common.loading')}</p></div>
@@ -82,13 +88,22 @@ export default function PatientProfile() {
         )}
       </section>
 
+      <section className="visit-history">
+        <h2 className="section-title">{t('rx.history')}</h2>
+        {prescriptions.length === 0 ? (
+          <div className="card empty-day">{t('rx.none')}</div>
+        ) : (
+          prescriptions.map((r) => <RxCard key={r.id} r={r} t={t} />)
+        )}
+      </section>
+
       {showConsult && (
         <ConsultationModal
           patientId={Number(id)}
           patientLabel={`${fullName} · ${patient.uhid}`}
           doctors={doctors}
           onClose={() => setShowConsult(false)}
-          onSaved={() => { setShowConsult(false); loadEncounters() }}
+          onSaved={() => { setShowConsult(false); loadEncounters(); loadRx() }}
         />
       )}
     </div>
@@ -112,6 +127,32 @@ function VisitCard({ e, t }) {
         </div>
       )}
       {e.notes && <div className="visit-line"><b>{t('consult.notes')}:</b> {e.notes}</div>}
+    </div>
+  )
+}
+
+function RxCard({ r, t }) {
+  return (
+    <div className="visit-card">
+      <div className="visit-head">
+        <span className="visit-date">{fmtDateTime(r.created_at)}</span>
+        {r.doctor_name && <span className="visit-doctor">{r.doctor_name}</span>}
+        {r.pharmacy_status && (
+          <span className={`badge rx-${r.pharmacy_status}`}>{t(`rx.status_${r.pharmacy_status}`)}</span>
+        )}
+      </div>
+      <ul className="rx-list">
+        {r.items.map((it, i) => (
+          <li key={i}>
+            <strong>{it.drug_name}</strong>
+            {it.strength ? ` ${it.strength}` : ''}
+            {it.frequency ? ` · ${it.frequency}` : ''}
+            {it.duration ? ` · ${it.duration}` : ''}
+            {it.quantity ? ` · ${t('rx.qty')} ${it.quantity}` : ''}
+            {it.instructions ? ` — ${it.instructions}` : ''}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

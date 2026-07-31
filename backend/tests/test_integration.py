@@ -409,6 +409,38 @@ async def test_patient_update_preserves_other_fields(conn):
     assert updated["first_name"] == "Keep"
 
 
+# --- Pharmacy: prescribe -> outbox -> sent -----------------------------------
+async def test_prescription_queues_and_sends(conn):
+    from app.services import pharmacy as rx_svc
+    from app.schemas.prescription import PrescriptionCreate, PrescriptionItemIn
+    p = await patients_svc.create(conn, PatientCreate(first_name="Rx", phone="9000000090"), None)
+
+    rx = await rx_svc.create(conn, PrescriptionCreate(
+        patient_id=p["id"],
+        items=[
+            PrescriptionItemIn(drug_name="Paracetamol", strength="500mg",
+                               frequency="1-0-1", duration="5 days", quantity="10"),
+            PrescriptionItemIn(drug_name="Amoxicillin", quantity="15"),
+        ],
+    ), None)
+    assert len(rx["items"]) == 2
+    assert rx["pharmacy_status"] == "pending"
+
+    # queued in the outbox with a frozen payload
+    outbox = await rx_svc.list_outbox(conn, "pending")
+    mine = [o for o in outbox if o["prescription_id"] == rx["id"]]
+    assert len(mine) == 1
+    assert mine[0]["payload"]["items"][0]["drug_name"] == "Paracetamol"
+    assert mine[0]["payload"]["patient"]["uhid"] == p["uhid"]
+
+    # mark sent -> leaves the pending queue
+    await rx_svc.mark_sent(conn, mine[0]["id"], None)
+    still_pending = [o for o in await rx_svc.list_outbox(conn, "pending")
+                     if o["prescription_id"] == rx["id"]]
+    assert still_pending == []
+    assert (await rx_svc.get_by_id(conn, rx["id"]))["pharmacy_status"] == "sent"
+
+
 # --- Billing: invoice -> item -> finalize -> pay (case: money flow) ----------
 async def test_invoice_lifecycle(conn):
     from app.services import billing as bill
