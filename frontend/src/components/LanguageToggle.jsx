@@ -11,15 +11,17 @@ export default function LanguageToggle() {
         className={lang === 'en' ? 'active' : ''}
         onClick={() => i18n.changeLanguage('en')}
         type="button"
+        aria-pressed={lang === 'en'}
       >
-        EN
+        English
       </button>
       <button
         className={lang === 'gu' ? 'active' : ''}
         onClick={() => i18n.changeLanguage('gu')}
         type="button"
+        aria-pressed={lang === 'gu'}
       >
-        ગુ
+        ગુજરાતી
       </button>
     </div>
   )
