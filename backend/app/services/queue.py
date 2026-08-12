@@ -19,7 +19,7 @@ _QUEUE_SELECT = """
            q.reason, q.booked_at, q.checked_in_at, q.called_at, q.completed_at,
            p.uhid AS patient_uhid,
            (p.first_name || ' ' || COALESCE(p.last_name, '')) AS patient_name,
-           p.phone AS patient_phone,
+           p.phone AS patient_phone, p.dob AS patient_dob, p.gender AS patient_gender,
            d.full_name AS doctor_name
     FROM public.queue_entries q
     JOIN public.patients p ON p.id = q.patient_id

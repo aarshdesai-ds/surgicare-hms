@@ -23,6 +23,46 @@ const ACTIONS = {
   no_show: [],
 }
 
+// Unified status system: colour + icon + text (never colour alone).
+const STATUS_META = {
+  in_consultation: { icon: '▶', tone: 'active' },
+  waiting: { icon: '⏳', tone: 'wait' },
+  booked: { icon: '◷', tone: 'neutral' },
+  completed: { icon: '✓', tone: 'ok' },
+  no_show: { icon: '✕', tone: 'bad' },
+}
+// Sort order down the table: who's being seen, who's next, who's booked, then done.
+const RANK = { in_consultation: 0, waiting: 1, booked: 2, completed: 3, no_show: 4 }
+
+// A waiting patient past this many minutes is flagged in the table.
+const WAIT_ALERT_MIN = 30
+
+function ageFromDob(dob) {
+  if (!dob) return null
+  const b = new Date(dob)
+  if (Number.isNaN(b.getTime())) return null
+  const now = new Date()
+  let a = now.getFullYear() - b.getFullYear()
+  const m = now.getMonth() - b.getMonth()
+  if (m < 0 || (m === 0 && now.getDate() < b.getDate())) a--
+  return a >= 0 ? a : null
+}
+function ageSex(dob, gender) {
+  const a = ageFromDob(dob)
+  const g = gender ? gender[0].toUpperCase() : ''
+  if (a == null && !g) return '—'
+  return [a != null ? a : '—', g || '—'].join(' / ')
+}
+function waitMinutes(checkedInAt) {
+  if (!checkedInAt) return null
+  const mins = Math.floor((Date.now() - new Date(checkedInAt).getTime()) / 60000)
+  return mins >= 0 ? mins : null
+}
+function fmtTime(ts) {
+  if (!ts) return '—'
+  return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
+
 export default function Queue() {
   const { t } = useTranslation()
   const [doctors, setDoctors] = useState([])
@@ -71,12 +111,11 @@ export default function Queue() {
     } catch (e) { setError(e.message) }
   }
 
-  const groups = {
-    in_consultation: items.filter((i) => i.status === 'in_consultation'),
-    waiting: items.filter((i) => i.status === 'waiting'),
-    booked: items.filter((i) => i.status === 'booked'),
-    done: items.filter((i) => ['completed', 'no_show'].includes(i.status)),
-  }
+  const sorted = [...items].sort((a, b) => {
+    const r = (RANK[a.status] ?? 9) - (RANK[b.status] ?? 9)
+    if (r) return r
+    return (a.token_no ?? 9999) - (b.token_no ?? 9999)
+  })
 
   return (
     <div className="page">
@@ -119,18 +158,27 @@ export default function Queue() {
       ) : items.length === 0 ? (
         <div className="card empty-day">{t('queue.empty')}</div>
       ) : (
-        <div className="queue-groups">
-          {['in_consultation', 'waiting', 'booked', 'done'].map((g) =>
-            groups[g].length === 0 ? null : (
-              <section className="queue-group" key={g}>
-                <h3>{t(`queue.groups.${g}`)} <span className="count">{groups[g].length}</span></h3>
-                {groups[g].map((e) => (
-                  <QueueRow key={e.id} e={e} t={t} onAction={setStatus}
-                    onConsult={setConsult} selectedDoctorId={Number(doctorId)} />
-                ))}
-              </section>
-            ),
-          )}
+        <div className="card table-card queue-table-card">
+          <table className="data-table queue-table">
+            <thead>
+              <tr>
+                <th>{t('queue.col.token')}</th>
+                <th>{t('queue.col.name')}</th>
+                <th>{t('queue.col.ageSex')}</th>
+                <th>{t('queue.col.arrival')}</th>
+                <th>{t('queue.col.wait')}</th>
+                <th>{t('queue.col.doctor')}</th>
+                <th>{t('queue.col.status')}</th>
+                <th className="col-action">{t('queue.col.action')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sorted.map((e) => (
+                <QueueRow key={e.id} e={e} t={t} onAction={setStatus}
+                  onConsult={setConsult} selectedDoctorId={Number(doctorId)} />
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
@@ -151,23 +199,39 @@ export default function Queue() {
 
 function QueueRow({ e, t, onAction, onConsult, selectedDoctorId }) {
   const covered = selectedDoctorId && e.doctor_id !== selectedDoctorId
+  const meta = STATUS_META[e.status] || { icon: '•', tone: 'neutral' }
+  const wait = e.status === 'waiting' ? waitMinutes(e.checked_in_at) : null
+  const overdue = wait != null && wait >= WAIT_ALERT_MIN
+  const arrival = e.checked_in_at ? fmtTime(e.checked_in_at) : null
+
   return (
-    <div className={`queue-row status-${e.status}`}>
-      <div className={`token-chip ${e.token_no ? '' : 'empty'}`}>
+    <tr className={`queue-tr status-${e.status}${overdue ? ' row-alert' : ''}`}>
+      <td className={`q-token${e.token_no ? '' : ' empty'}`}>
         {e.token_no ? `#${e.token_no}` : '—'}
-      </div>
-      <div className="appt-body">
-        <div className="appt-patient">
-          {e.patient_name} <span className="mono muted">{e.patient_uhid}</span>
-          {covered && <span className="badge s-spec under-chip">{e.doctor_name}</span>}
+      </td>
+      <td>
+        <div className="q-name">{e.patient_name}</div>
+        <div className="q-sub muted">
+          <span className="mono">{e.patient_uhid}</span>
+          {e.reason ? <span> · {e.reason}</span> : null}
         </div>
-        <div className="appt-meta muted">
-          {e.patient_phone}{e.reason ? ` · ${e.reason}` : ''}
-        </div>
-      </div>
-      <div className="appt-side">
-        <span className={`badge s-${e.status}`}>{t(`queue.status.${e.status}`)}</span>
-        <div className="appt-actions">
+      </td>
+      <td className="q-agesex">{ageSex(e.patient_dob, e.patient_gender)}</td>
+      <td className="q-arrival">{arrival || <span className="muted">{t('queue.notArrived')}</span>}</td>
+      <td className={`q-wait${overdue ? ' overdue' : ''}`}>
+        {wait != null ? `${wait} ${t('dashboard.minShort')}` : '—'}
+      </td>
+      <td className="q-doctor">
+        {covered ? <span className="q-cover">{e.doctor_name}</span> : e.doctor_name}
+      </td>
+      <td>
+        <span className={`q-status tone-${meta.tone}`}>
+          <span className="q-status-ico" aria-hidden="true">{meta.icon}</span>
+          {t(`queue.status.${e.status}`)}
+        </span>
+      </td>
+      <td className="col-action">
+        <div className="q-actions">
           {(e.status === 'waiting' || e.status === 'in_consultation') && (
             <button className="btn-ghost sm" onClick={() => onConsult(e)}>
               {t('consult.consult')}
@@ -183,8 +247,8 @@ function QueueRow({ e, t, onAction, onConsult, selectedDoctorId }) {
             </button>
           ))}
         </div>
-      </div>
-    </div>
+      </td>
+    </tr>
   )
 }
 

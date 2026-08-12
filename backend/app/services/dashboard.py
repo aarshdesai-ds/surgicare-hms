@@ -11,6 +11,10 @@ _EMPTY = {
     "completed": 0, "no_show": 0, "total": 0, "current_token": None,
 }
 
+# A waiting patient past this many minutes is surfaced in "Attention needed".
+# Tunable to match the hospital's own sense of an acceptable OPD wait.
+WAIT_ALERT_MIN = 30
+
 
 async def summary(conn: asyncpg.Connection, day: date) -> dict:
     patients_total = await conn.fetchval("SELECT COUNT(*) FROM public.patients")
@@ -71,12 +75,46 @@ async def summary(conn: asyncpg.Connection, day: date) -> dict:
             "counts": counts,
         })
 
+    # Live wait times only make sense for the current day. For a past date the
+    # clock has moved on, so "minutes waiting" would be meaningless.
+    today_ist = await conn.fetchval("SELECT (now() AT TIME ZONE 'Asia/Kolkata')::date")
+    attention: list[dict] = []
+    waiting_longest = 0
+    if day == today_ist:
+        name_by_doc = {d["id"]: d["full_name"] for d in doctors}
+        waits = await conn.fetch(
+            "SELECT q.token_no, q.doctor_id, "
+            "       p.first_name, p.last_name, "
+            "       floor(EXTRACT(EPOCH FROM (now() - q.checked_in_at)) / 60)::int AS wait_min "
+            "FROM public.queue_entries q "
+            "JOIN public.patients p ON p.id = q.patient_id "
+            "WHERE q.queue_date = $1 AND q.status = 'waiting' "
+            "  AND q.checked_in_at IS NOT NULL "
+            "ORDER BY q.checked_in_at ASC",
+            day,
+        )
+        for w in waits:
+            wait_min = max(0, w["wait_min"] or 0)
+            waiting_longest = max(waiting_longest, wait_min)
+            if wait_min >= WAIT_ALERT_MIN:
+                full = f'{w["first_name"] or ""} {w["last_name"] or ""}'.strip()
+                attention.append({
+                    "token_no": w["token_no"],
+                    "patient_name": full or "—",
+                    "doctor_name": name_by_doc.get(w["doctor_id"], "—"),
+                    "wait_min": wait_min,
+                })
+        attention.sort(key=lambda a: a["wait_min"], reverse=True)
+
     return {
         "date": day.isoformat(),
         "totals": {
             "patients_total": patients_total,
             "registered_today": registered_today,
+            "waiting_longest": waiting_longest,
             **totals,
         },
+        "attention": attention,
+        "wait_alert_min": WAIT_ALERT_MIN,
         "doctors": doctors_out,
     }
