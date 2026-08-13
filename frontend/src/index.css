@@ -741,18 +741,51 @@ h2, h3 { font-family: 'Inter', 'Noto Sans Gujarati', sans-serif; }
   color: var(--text-soft); transform: none;
 }
 
-/* New vs returning patient toggle */
-.mode-toggle {
-  display: inline-flex; gap: 4px; margin-bottom: 12px;
-  background: var(--surface-2); border: 1px solid var(--border);
-  border-radius: 10px; padding: 4px;
+/* New vs returning: two explicit choice cards, so the distinction is obvious */
+.patient-mode {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;
 }
-.mode-toggle button {
-  border: 0; background: transparent; padding: 8px 16px; border-radius: 7px;
-  font-weight: 700; font-size: 13.5px; color: var(--muted); cursor: pointer;
-  font-family: inherit; transition: background 0.14s var(--ease), color 0.14s var(--ease);
+.pm-option {
+  display: flex; align-items: flex-start; gap: 11px; text-align: left;
+  border: 1.5px solid var(--border-strong); border-radius: 12px;
+  background: var(--surface-2); padding: 12px 14px; cursor: pointer;
+  font-family: inherit; position: relative;
+  transition: border-color 0.16s var(--ease), background 0.16s var(--ease), box-shadow 0.16s var(--ease);
 }
-.mode-toggle button.active { background: var(--surface); color: var(--primary-dark); box-shadow: var(--shadow-xs); }
+.pm-option:hover { border-color: var(--primary); }
+.pm-option.active {
+  border-color: var(--primary); background: var(--primary-soft);
+  box-shadow: var(--ring);
+}
+.pm-option.new.active { border-color: var(--accent-deep); background: var(--accent-soft); box-shadow: 0 0 0 3px rgba(201, 138, 83, 0.18); }
+.pm-ico {
+  width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+  display: grid; place-items: center; font-size: 16px;
+  background: var(--surface); border: 1px solid var(--border);
+}
+.pm-option.active .pm-ico { background: #fff; border-color: var(--primary-soft-2); }
+.pm-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pm-title { font-size: 14px; font-weight: 800; color: var(--text); }
+.pm-hint { font-size: 11.5px; font-weight: 600; color: var(--muted); line-height: 1.3; }
+.pm-option.active .pm-title { color: var(--primary-dark); }
+.pm-option.new.active .pm-title { color: var(--accent-deep); }
+/* Checkmark on the chosen card */
+.pm-option.active::after {
+  content: '✓'; position: absolute; top: 8px; right: 10px;
+  font-size: 12px; font-weight: 900; color: var(--primary);
+}
+.pm-option.new.active::after { color: var(--accent-deep); }
+@media (max-width: 620px) { .patient-mode { grid-template-columns: 1fr; } }
+
+/* Queue status legend — makes the status pills self-teaching */
+.queue-legend {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 12px;
+}
+.legend-label {
+  font-size: 11px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--muted); margin-right: 2px;
+}
 
 .np-grid { display: grid; gap: 12px; grid-template-columns: repeat(4, 1fr); }
 .np-grid input, .np-grid select {

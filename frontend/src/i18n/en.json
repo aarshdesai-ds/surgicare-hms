@@ -40,6 +40,9 @@
     "patient": "Patient",
     "returning": "Returning patient",
     "new": "New patient",
+    "returningHint": "Already has a file — look up by name, phone or UHID",
+    "newHint": "First visit — create a new profile",
+    "legend": "Status key",
     "newPatient": "New patient details",
     "existingFound": "A patient with this phone already exists — using their profile.",
     "nameRequired": "Enter at least a first name and phone number.",
@@ -132,6 +135,20 @@
     "resetSent": "If that email is registered, a reset link is on its way.",
     "resetNeedEmail": "Enter your email above first, then tap “Forgot password?”.",
     "resetFailed": "Could not send the reset email. Please try again."
+  },
+  "reset": {
+    "title": "Set a new password",
+    "intro": "Choose a new password for your account.",
+    "newPassword": "New password",
+    "confirm": "Confirm password",
+    "submit": "Update password",
+    "submitting": "Updating…",
+    "mismatch": "The two passwords do not match.",
+    "tooShort": "Use at least 8 characters.",
+    "success": "Password updated. You can sign in now.",
+    "failed": "Could not update the password. The link may have expired — request a new one.",
+    "invalid": "This reset link is invalid or has expired. Request a new one from the sign-in page.",
+    "toLogin": "Go to sign in"
   },
   "ot": {
     "title": "Operation Theatres",

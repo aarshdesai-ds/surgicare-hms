@@ -160,6 +160,16 @@ export default function Queue() {
       ) : items.length === 0 ? (
         <div className="card empty-day">{t('queue.empty')}</div>
       ) : (
+        <>
+        <div className="queue-legend">
+          <span className="legend-label">{t('queue.legend')}:</span>
+          {['waiting', 'in_consultation', 'booked', 'completed', 'no_show'].map((s) => (
+            <span key={s} className={`q-status tone-${STATUS_META[s].tone}`}>
+              <span className="q-status-ico" aria-hidden="true">{STATUS_META[s].icon}</span>
+              {t(`queue.status.${s}`)}
+            </span>
+          ))}
+        </div>
         <div className="card table-card queue-table-card">
           <table className="data-table queue-table">
             <thead>
@@ -182,6 +192,7 @@ export default function Queue() {
             </tbody>
           </table>
         </div>
+        </>
       )}
 
       {consult && (
@@ -393,12 +404,28 @@ function AddPanel({ doctorId, day, t, onAdded, onError }) {
       {/* Step 1 — who is the patient */}
       <section className="add-section">
         <h4 className="add-step">{t('queue.sec.patient')}</h4>
-        <div className="mode-toggle">
-          <button className={mode === 'returning' ? 'active' : ''} onClick={() => setMode('returning')}>
-            {t('queue.returning')}
+        <div className="patient-mode" role="radiogroup">
+          <button
+            type="button" role="radio" aria-checked={mode === 'returning'}
+            className={`pm-option${mode === 'returning' ? ' active' : ''}`}
+            onClick={() => setMode('returning')}
+          >
+            <span className="pm-ico">🔁</span>
+            <span className="pm-text">
+              <span className="pm-title">{t('queue.returning')}</span>
+              <span className="pm-hint">{t('queue.returningHint')}</span>
+            </span>
           </button>
-          <button className={mode === 'new' ? 'active' : ''} onClick={() => { setMode('new'); setNote('') }}>
-            {t('queue.new')}
+          <button
+            type="button" role="radio" aria-checked={mode === 'new'}
+            className={`pm-option new${mode === 'new' ? ' active' : ''}`}
+            onClick={() => { setMode('new'); setNote('') }}
+          >
+            <span className="pm-ico">✨</span>
+            <span className="pm-text">
+              <span className="pm-title">{t('queue.new')}</span>
+              <span className="pm-hint">{t('queue.newHint')}</span>
+            </span>
           </button>
         </div>
 
