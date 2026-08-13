@@ -321,7 +321,20 @@
     "cat_ot": "ઓટી",
     "cat_lab": "લેબ",
     "cat_pharmacy": "ફાર્મસી",
-    "cat_other": "અન્ય"
+    "cat_other": "અન્ય",
+    "payOnline": "ઓનલાઇન ચૂકવો",
+    "onlineTitle": "ઓનલાઇન ચુકવણી",
+    "generating": "લિંક બની રહી છે…",
+    "scanToPay": "ચૂકવવા દર્દીને આ QR સ્કેન કરવા કહો",
+    "orShare": "અથવા આ લિંક શેર કરો",
+    "copyLink": "લિંક કૉપિ કરો",
+    "copied": "કૉપિ થયું",
+    "checkStatus": "સ્થિતિ તપાસો",
+    "checking": "તપાસ થઈ રહી છે…",
+    "linkPaid": "ઓનલાઇન ચૂકવાયું",
+    "linkPending": "ચુકવણીની રાહમાં",
+    "newLink": "નવી લિંક",
+    "amountToCollect": "વસૂલવાની રકમ"
   },
   "consult": {
     "title": "પરામર્શ",

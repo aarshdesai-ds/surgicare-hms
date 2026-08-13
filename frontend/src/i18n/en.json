@@ -321,7 +321,20 @@
     "cat_ot": "OT",
     "cat_lab": "Lab",
     "cat_pharmacy": "Pharmacy",
-    "cat_other": "Other"
+    "cat_other": "Other",
+    "payOnline": "Pay online",
+    "onlineTitle": "Online payment",
+    "generating": "Creating link…",
+    "scanToPay": "Ask the patient to scan this QR to pay",
+    "orShare": "Or share this link",
+    "copyLink": "Copy link",
+    "copied": "Copied",
+    "checkStatus": "Check status",
+    "checking": "Checking…",
+    "linkPaid": "Paid online",
+    "linkPending": "Waiting for payment",
+    "newLink": "New link",
+    "amountToCollect": "Amount to collect"
   },
   "consult": {
     "title": "Consultation",

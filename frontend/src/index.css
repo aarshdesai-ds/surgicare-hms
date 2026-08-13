@@ -1061,6 +1061,36 @@ h2, h3 { font-family: 'Inter', 'Noto Sans Gujarati', sans-serif; }
 }
 .pay-inline { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
+/* ---- Online payment (Razorpay link + QR) ---- */
+.pay-online {
+  margin-top: 16px; padding: 18px 20px;
+  border: 1px solid var(--border); border-left: 4px solid var(--accent);
+}
+.pay-online:hover { transform: none; box-shadow: var(--shadow-sm); }
+.pay-online:hover::after { opacity: 0; }
+.pay-online-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.pay-online-title { font-size: 15px; font-weight: 800; color: var(--text); }
+.pay-online-body { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+.qr-box {
+  background: #fff; padding: 10px; border-radius: 12px;
+  border: 1px solid var(--border); flex-shrink: 0; line-height: 0;
+  box-shadow: var(--shadow-xs);
+}
+.pay-online-info { flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 8px; }
+.scan-hint { margin: 0; font-size: 14px; font-weight: 600; color: var(--text-soft); }
+.link-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.short-url {
+  font-size: 13px; color: var(--primary-dark); font-weight: 600;
+  word-break: break-all; text-decoration: none;
+  background: var(--surface-2); border: 1px solid var(--border);
+  padding: 6px 10px; border-radius: 8px;
+}
+.short-url:hover { text-decoration: underline; }
+.pay-online-actions { display: flex; gap: 10px; align-items: center; margin-top: 4px; flex-wrap: wrap; }
+
 .num-input {
   width: 100px; text-align: right; padding: 6px 9px;
   border: 1px solid transparent; border-radius: 8px; background: transparent;

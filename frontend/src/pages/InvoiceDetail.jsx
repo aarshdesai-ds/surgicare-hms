@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { QRCodeSVG } from 'qrcode.react'
 import {
   getInvoice, addLineItem, removeLineItem, setDiscount,
   finalizeInvoice, cancelInvoice, addPayment, listServices, money, fmtDate,
+  getPaymentsConfig, createPaymentLink, getPaymentLink, syncPaymentLink,
 } from '../lib/billing'
 
 const METHODS = ['cash', 'card', 'upi', 'netbanking', 'razorpay', 'other']
@@ -14,6 +16,8 @@ export default function InvoiceDetail() {
   const nav = useNavigate()
   const [inv, setInv] = useState(null)
   const [services, setServices] = useState([])
+  const [rzpEnabled, setRzpEnabled] = useState(false)
+  const [link, setLink] = useState(null)
   const [error, setError] = useState('')
 
   const load = useCallback(() => {
@@ -22,11 +26,24 @@ export default function InvoiceDetail() {
   useEffect(() => {
     load()
     listServices(true).then((r) => setServices(r.items)).catch(() => {})
-  }, [load])
+    getPaymentsConfig().then((c) => setRzpEnabled(c.razorpay_enabled)).catch(() => {})
+    getPaymentLink(id).then((r) => setLink(r.link)).catch(() => {})
+  }, [load, id])
 
   async function act(fn) {
     setError('')
     try { setInv(await fn()) } catch (e) { setError(e.message) }
+  }
+
+  // Payment-link calls return { invoice, link } — update both.
+  async function actLink(fn) {
+    setError('')
+    try {
+      const res = await fn()
+      if (res.invoice) setInv(res.invoice)
+      if ('link' in res) setLink(res.link)
+      return res
+    } catch (e) { setError(e.message) }
   }
 
   if (error && !inv) return <div className="page"><div className="alert error">{error}</div></div>
@@ -130,6 +147,14 @@ export default function InvoiceDetail() {
             onDiscount={(d) => act(() => setDiscount(id, d))} />
         )}
 
+        {rzpEnabled && !isDraft && inv.status !== 'cancelled' && due > 0 && (
+          <PayOnlinePanel
+            t={t} due={due} link={link}
+            onCreate={() => actLink(() => createPaymentLink(id, due))}
+            onSync={() => actLink(() => syncPaymentLink(id))}
+          />
+        )}
+
         <div className="invoice-buttons">
           {!isDraft && inv.status !== 'cancelled' && due > 0 && (
             <PaymentButton t={t} due={due} methods={METHODS}
@@ -210,6 +235,71 @@ function AddItemPanel({ t, services, onAdd, onDiscount, discount }) {
         <span className="field-label">{t('billing.discount')}</span>
         <input className="reason-input sm-w" type="number" min="0" step="0.01" value={disc} onChange={(e) => setDisc(e.target.value)} />
         <button className="btn-ghost sm" onClick={() => onDiscount(Number(disc) || 0)}>{t('common.save')}</button>
+      </div>
+    </div>
+  )
+}
+
+function PayOnlinePanel({ t, due, link, onCreate, onSync }) {
+  const [busy, setBusy] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const active = link && link.status === 'created' && link.short_url
+
+  async function run(fn) {
+    setBusy(true)
+    try { await fn() } finally { setBusy(false) }
+  }
+  function copy() {
+    if (!link?.short_url) return
+    navigator.clipboard?.writeText(link.short_url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
+
+  if (!active) {
+    return (
+      <div className="card pay-online">
+        <div className="pay-online-head">
+          <span className="pay-online-title">💳 {t('billing.onlineTitle')}</span>
+          <span className="muted">{t('billing.amountToCollect')}: <strong>{money(due)}</strong></span>
+        </div>
+        <button className="btn-primary inline" disabled={busy} onClick={() => run(onCreate)}>
+          {busy ? t('billing.generating') : t('billing.payOnline')}
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="card pay-online">
+      <div className="pay-online-head">
+        <span className="pay-online-title">💳 {t('billing.onlineTitle')}</span>
+        <span className="badge s-waiting">{t('billing.linkPending')}</span>
+      </div>
+      <div className="pay-online-body">
+        <div className="qr-box">
+          <QRCodeSVG value={link.short_url} size={148} level="M" marginSize={2} />
+        </div>
+        <div className="pay-online-info">
+          <p className="scan-hint">{t('billing.scanToPay')}</p>
+          <span className="field-label">{t('billing.orShare')}</span>
+          <div className="link-row">
+            <a href={link.short_url} target="_blank" rel="noreferrer" className="short-url">
+              {link.short_url}
+            </a>
+            <button className="btn-ghost sm" onClick={copy}>
+              {copied ? t('billing.copied') : t('billing.copyLink')}
+            </button>
+          </div>
+          <div className="pay-online-actions">
+            <button className="btn-primary inline" disabled={busy} onClick={() => run(onSync)}>
+              {busy ? t('billing.checking') : t('billing.checkStatus')}
+            </button>
+            <button className="btn-ghost sm" disabled={busy} onClick={() => run(onCreate)}>
+              {t('billing.newLink')}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )

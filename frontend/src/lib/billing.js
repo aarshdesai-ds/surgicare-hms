@@ -28,6 +28,16 @@ export const cancelInvoice = (id) =>
 export const addPayment = (id, d) =>
   apiRequest(`/api/invoices/${id}/payments`, { method: 'POST', body: d })
 
+// --- online payments (Razorpay payment links) ---
+export const getPaymentsConfig = () => apiGet('/api/payments/config')
+export const createPaymentLink = (id, amount) =>
+  apiRequest(`/api/invoices/${id}/payment-link`, {
+    method: 'POST', body: amount ? { amount } : undefined,
+  })
+export const getPaymentLink = (id) => apiGet(`/api/invoices/${id}/payment-link`)
+export const syncPaymentLink = (id) =>
+  apiRequest(`/api/invoices/${id}/payment-link/sync`, { method: 'POST' })
+
 // --- shared formatting ---
 export const money = (n) =>
   '₹' + Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
