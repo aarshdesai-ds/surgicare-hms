@@ -78,6 +78,17 @@
       "complete": "Complete",
       "noShow": "No show",
       "cancel": "Cancel"
+    },
+    "confirm": {
+      "no_show": "Mark as no-show?",
+      "cancelled": "Remove from queue?",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "sec": {
+      "patient": "1 · Patient",
+      "visit": "2 · Visit details",
+      "action": "3 · Add to queue"
     }
   },
   "patients": {
@@ -113,7 +124,14 @@
     "password": "Password",
     "submit": "Sign in",
     "submitting": "Signing in…",
-    "error": "Could not sign in. Please check your email and password."
+    "error": "Could not sign in. Please check your email and password.",
+    "show": "Show",
+    "hide": "Hide",
+    "capsLock": "Caps Lock is on",
+    "forgot": "Forgot password?",
+    "resetSent": "If that email is registered, a reset link is on its way.",
+    "resetNeedEmail": "Enter your email above first, then tap “Forgot password?”.",
+    "resetFailed": "Could not send the reset email. Please try again."
   },
   "ot": {
     "title": "Operation Theatres",

@@ -361,6 +361,25 @@ h2, h3 { font-family: 'Inter', 'Noto Sans Gujarati', sans-serif; }
   border: 1px solid #efccbe;
 }
 
+/* ---- Login states: caps lock, show/hide, forgot, reserved message space ---- */
+.auth-card .password-field input { padding-right: 66px; }
+.caps-hint {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700; color: var(--accent-deep);
+  text-transform: none; letter-spacing: 0; margin-top: 2px;
+}
+.auth-row { display: flex; justify-content: flex-end; margin-top: -6px; }
+.link-btn {
+  border: 0; background: transparent; cursor: pointer; font-family: inherit;
+  font-size: 13px; font-weight: 700; color: var(--primary); padding: 2px 2px;
+  border-radius: 6px;
+}
+.link-btn:hover { color: var(--primary-dark); text-decoration: underline; }
+.link-btn:focus-visible { outline: none; box-shadow: var(--ring); }
+/* Reserve room so the card height is stable whether or not a message shows */
+.auth-msg { min-height: 44px; display: flex; align-items: stretch; }
+.auth-msg .alert { width: 100%; }
+
 /* ---------------- Dashboard ---------------- */
 .page-title { margin: 0 0 5px; font-size: 29px; font-weight: 800; color: var(--text); }
 .page > .muted, .muted { color: var(--muted); }
@@ -686,6 +705,17 @@ h2, h3 { font-family: 'Inter', 'Noto Sans Gujarati', sans-serif; }
 .add-panel { padding: 20px 22px; margin-bottom: 18px; }
 .add-panel:hover { transform: none; box-shadow: var(--shadow-sm); }
 .add-panel:hover::after { opacity: 0; }
+
+/* Grouped OPD add flow: Patient → Visit details → Add to queue */
+.add-section { padding: 14px 0; border-top: 1px solid var(--border); }
+.add-section:first-child { padding-top: 0; border-top: 0; }
+.add-section:last-child { padding-bottom: 0; }
+.add-step {
+  margin: 0 0 12px; font-size: 11px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.07em; color: var(--accent-deep);
+  font-family: 'Inter', sans-serif;
+}
+
 .add-row { display: grid; gap: 16px; grid-template-columns: 1.4fr 1fr; }
 .add-field { display: flex; flex-direction: column; gap: 6px; }
 .field-label {
@@ -699,13 +729,21 @@ h2, h3 { font-family: 'Inter', 'Noto Sans Gujarati', sans-serif; }
 }
 .reason-input:focus { border-color: var(--primary); background: var(--surface); box-shadow: var(--ring); }
 .add-actions {
-  display: flex; justify-content: flex-end; gap: 12px;
-  margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: 12px; align-items: center;
+}
+/* De-emphasised Cancel, consistent with modal footers */
+.btn-ghost.quiet {
+  background: transparent; border-color: transparent; box-shadow: none;
+  color: var(--muted); font-weight: 600; margin-right: auto;
+}
+.btn-ghost.quiet:hover {
+  background: var(--surface-2); border-color: var(--border);
+  color: var(--text-soft); transform: none;
 }
 
 /* New vs returning patient toggle */
 .mode-toggle {
-  display: inline-flex; gap: 4px; margin-bottom: 16px;
+  display: inline-flex; gap: 4px; margin-bottom: 12px;
   background: var(--surface-2); border: 1px solid var(--border);
   border-radius: 10px; padding: 4px;
 }
@@ -839,6 +877,17 @@ h2, h3 { font-family: 'Inter', 'Noto Sans Gujarati', sans-serif; }
 
 .queue-table .col-action { text-align: right; }
 .q-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+
+/* Inline "are you sure?" for no-show / remove — prevents accidental clicks */
+.q-confirm {
+  display: flex; align-items: center; gap: 8px; justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.q-confirm-q { font-size: 12.5px; font-weight: 700; color: var(--bad-fg); white-space: nowrap; }
+.btn-primary.danger {
+  background: linear-gradient(180deg, #c9543a 0%, var(--bad-fg) 100%);
+  box-shadow: 0 1px 2px rgba(120, 40, 22, 0.3), 0 6px 16px rgba(184, 69, 42, 0.25);
+}
 
 @media (max-width: 900px) {
   .add-row { grid-template-columns: 1fr; }

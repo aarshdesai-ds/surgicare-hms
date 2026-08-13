@@ -33,6 +33,8 @@ const STATUS_META = {
 }
 // Sort order down the table: who's being seen, who's next, who's booked, then done.
 const RANK = { in_consultation: 0, waiting: 1, booked: 2, completed: 3, no_show: 4 }
+// Transitions that lose the patient from the active queue → confirm before doing.
+const DESTRUCTIVE = new Set(['no_show', 'cancelled'])
 
 // A waiting patient past this many minutes is flagged in the table.
 const WAIT_ALERT_MIN = 30
@@ -198,6 +200,7 @@ export default function Queue() {
 }
 
 function QueueRow({ e, t, onAction, onConsult, selectedDoctorId }) {
+  const [confirm, setConfirm] = useState(null) // next status awaiting confirmation
   const covered = selectedDoctorId && e.doctor_id !== selectedDoctorId
   const meta = STATUS_META[e.status] || { icon: '•', tone: 'neutral' }
   const wait = e.status === 'waiting' ? waitMinutes(e.checked_in_at) : null
@@ -231,22 +234,39 @@ function QueueRow({ e, t, onAction, onConsult, selectedDoctorId }) {
         </span>
       </td>
       <td className="col-action">
-        <div className="q-actions">
-          {(e.status === 'waiting' || e.status === 'in_consultation') && (
-            <button className="btn-ghost sm" onClick={() => onConsult(e)}>
-              {t('consult.consult')}
-            </button>
-          )}
-          {(ACTIONS[e.status] || []).map(([next, key, kind]) => (
+        {confirm ? (
+          <div className="q-confirm">
+            <span className="q-confirm-q">{t(`queue.confirm.${confirm}`)}</span>
             <button
-              key={next}
-              className={kind === 'primary' ? 'btn-primary inline sm' : 'btn-ghost sm'}
-              onClick={() => onAction(e.id, next)}
+              className="btn-primary inline sm danger"
+              onClick={() => { onAction(e.id, confirm); setConfirm(null) }}
             >
-              {t(`queue.actions.${key}`)}
+              {t('queue.confirm.yes')}
             </button>
-          ))}
-        </div>
+            <button className="btn-ghost sm" onClick={() => setConfirm(null)}>
+              {t('queue.confirm.no')}
+            </button>
+          </div>
+        ) : (
+          <div className="q-actions">
+            {(e.status === 'waiting' || e.status === 'in_consultation') && (
+              <button className="btn-ghost sm" onClick={() => onConsult(e)}>
+                {t('consult.consult')}
+              </button>
+            )}
+            {(ACTIONS[e.status] || []).map(([next, key, kind]) => (
+              <button
+                key={next}
+                className={kind === 'primary' ? 'btn-primary inline sm' : 'btn-ghost sm'}
+                onClick={() =>
+                  DESTRUCTIVE.has(next) ? setConfirm(next) : onAction(e.id, next)
+                }
+              >
+                {t(`queue.actions.${key}`)}
+              </button>
+            ))}
+          </div>
+        )}
       </td>
     </tr>
   )
@@ -370,31 +390,23 @@ function AddPanel({ doctorId, day, t, onAdded, onError }) {
 
   return (
     <div className="card add-panel">
-      <div className="mode-toggle">
-        <button className={mode === 'returning' ? 'active' : ''} onClick={() => setMode('returning')}>
-          {t('queue.returning')}
-        </button>
-        <button className={mode === 'new' ? 'active' : ''} onClick={() => { setMode('new'); setNote('') }}>
-          {t('queue.new')}
-        </button>
-      </div>
-
-      {note && <div className="alert info">{note}</div>}
-
-      {mode === 'returning' ? (
-        <div className="add-row">
-          <div className="add-field">
-            <span className="field-label">{t('queue.patient')}</span>
-            <PatientPicker value={patient} onChange={setPatient} placeholder={t('queue.searchPatient')} />
-          </div>
-          <div className="add-field">
-            <span className="field-label">{t('queue.reason')}</span>
-            <input value={reason} onChange={(e) => setReason(e.target.value)} className="reason-input" />
-          </div>
+      {/* Step 1 — who is the patient */}
+      <section className="add-section">
+        <h4 className="add-step">{t('queue.sec.patient')}</h4>
+        <div className="mode-toggle">
+          <button className={mode === 'returning' ? 'active' : ''} onClick={() => setMode('returning')}>
+            {t('queue.returning')}
+          </button>
+          <button className={mode === 'new' ? 'active' : ''} onClick={() => { setMode('new'); setNote('') }}>
+            {t('queue.new')}
+          </button>
         </div>
-      ) : (
-        <>
-          <span className="field-label">{t('queue.newPatient')}</span>
+
+        {note && <div className="alert info">{note}</div>}
+
+        {mode === 'returning' ? (
+          <PatientPicker value={patient} onChange={setPatient} placeholder={t('queue.searchPatient')} />
+        ) : (
           <div className="np-grid">
             <input placeholder={t('patients.firstName')} value={np.first_name}
               onChange={(e) => setNp({ ...np, first_name: e.target.value })} />
@@ -409,22 +421,33 @@ function AddPanel({ doctorId, day, t, onAdded, onError }) {
               <option value="O">{t('patients.other')}</option>
             </select>
           </div>
-          <div className="add-field np-reason">
-            <span className="field-label">{t('queue.reason')}</span>
-            <input value={reason} onChange={(e) => setReason(e.target.value)} className="reason-input" />
-          </div>
-        </>
-      )}
+        )}
+      </section>
 
-      <div className="add-actions">
-        <button className="btn-ghost" onClick={reset}>{t('common.cancel')}</button>
-        <button className="btn-ghost" disabled={busy} onClick={() => add(false)}>
-          {t('queue.preBook')}
-        </button>
-        <button className="btn-primary inline" disabled={busy} onClick={() => add(true)}>
-          {t('queue.walkIn')}
-        </button>
-      </div>
+      {/* Step 2 — why they're here */}
+      <section className="add-section">
+        <h4 className="add-step">{t('queue.sec.visit')}</h4>
+        <input
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          className="reason-input"
+          placeholder={t('queue.reason')}
+        />
+      </section>
+
+      {/* Step 3 — put them in the queue */}
+      <section className="add-section">
+        <h4 className="add-step">{t('queue.sec.action')}</h4>
+        <div className="add-actions">
+          <button className="btn-ghost quiet" onClick={reset}>{t('common.cancel')}</button>
+          <button className="btn-ghost" disabled={busy} onClick={() => add(false)}>
+            {t('queue.preBook')}
+          </button>
+          <button className="btn-primary inline" disabled={busy} onClick={() => add(true)}>
+            {t('queue.walkIn')}
+          </button>
+        </div>
+      </section>
     </div>
   )
 }

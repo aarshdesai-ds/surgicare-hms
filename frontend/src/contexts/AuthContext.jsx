@@ -37,6 +37,10 @@ export function AuthProvider({ children }) {
     loading,
     signIn: (email, password) =>
       supabase.auth.signInWithPassword({ email, password }),
+    resetPassword: (email) =>
+      supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/`,
+      }),
     signOut: () => supabase.auth.signOut(),
   }
 
