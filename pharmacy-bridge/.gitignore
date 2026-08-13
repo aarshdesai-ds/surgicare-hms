@@ -1,0 +1,4 @@
+# Bridge secrets and local output — never commit these.
+.env
+outbox/
+bridge.log

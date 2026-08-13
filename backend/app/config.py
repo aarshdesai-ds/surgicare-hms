@@ -42,6 +42,14 @@ class Settings(BaseSettings):
     def razorpay_configured(self) -> bool:
         return bool(self.razorpay_key_id and self.razorpay_key_secret)
 
+    # Pharmacy bridge: a shared secret the offline pharmacy-PC agent presents to
+    # pull pending prescriptions and mark them delivered. Blank = bridge off.
+    pharmacy_bridge_token: str = ""
+
+    @property
+    def pharmacy_bridge_enabled(self) -> bool:
+        return bool(self.pharmacy_bridge_token)
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
