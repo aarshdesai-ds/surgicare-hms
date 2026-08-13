@@ -49,3 +49,8 @@ class PaymentCreate(BaseModel):
     amount: Decimal = Field(gt=0)
     method: Literal["cash", "card", "upi", "netbanking", "razorpay", "other"] = "cash"
     reference: str | None = None
+
+
+class PaymentLinkCreate(BaseModel):
+    # Optional partial amount; defaults to the full amount due on the invoice.
+    amount: Decimal | None = Field(default=None, gt=0)

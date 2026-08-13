@@ -19,8 +19,8 @@ from .database import connect, disconnect
 from .errors import register_error_handlers
 from .logging_config import configure_logging, get_logger
 from .routers import (
-    beds, billing, dashboard, encounters, health, ot, patients, prescriptions,
-    queue, reports, staff,
+    beds, billing, dashboard, encounters, health, ot, patients, payments,
+    prescriptions, queue, reports, staff,
 )
 
 log = get_logger(__name__)
@@ -75,6 +75,7 @@ def create_app() -> FastAPI:
     app.include_router(reports.router)
     app.include_router(staff.router)
     app.include_router(billing.router)
+    app.include_router(payments.router)
     app.include_router(beds.router)
     app.include_router(prescriptions.router)
     return app
